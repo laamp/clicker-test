@@ -4,6 +4,15 @@ const app = express();
 const port = process.env.PORT || 5000;
 const db = require('./config/keys').mongoURI;
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+app.use(bodyParser.json());
+
+// routes
+const players = require('./routes/api/players');
+
 // connect to MongoDB using Mongoose
 mongoose.connect(db, {
         useNewUrlParser: true,
@@ -17,5 +26,6 @@ app.listen(port, () =>
     console.log(`Clicker server is running on port ${port}`)
 );
 
-// test route
-app.get("/", (req, res) => res.send('Hello, world.'));
+// routes
+app.get('/', (req, res) => res.send('Hello, world.'));
+app.use('/api/players', players);
