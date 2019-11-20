@@ -1,13 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const keys = require('../../config/keys');
+const passport = require('passport');
 const Player = require('../../models/Player');
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
 
 router.get('/test', (req, res) => res.json({
     msg: 'This is the player test route'
 }));
 
+router.get('/current', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    res.json({
+        id: req.player.id,
+        name: req.player.name,
+        email: req.player.email
+    });
+});
+
 router.post('/register', (req, res) => {
+    const {
+        errors,
+        isValid
+    } = validateRegisterInput(req.body);
+
+    if (!isValid) return res.status(400).json(errors);
+
     // check if provided email exists
     Player.findOne({
             email: req.body.email
@@ -30,7 +52,22 @@ router.post('/register', (req, res) => {
                         if (err) throw err;
                         newPlayer.password = hash;
                         newPlayer.save()
-                            .then(player => res.json(player))
+                            .then(player => {
+                                const payload = {
+                                    id: player.id,
+                                    email: player.email
+                                };
+
+                                jwt.sign(payload, keys.secretOrKey, {
+                                        expiresIn: 7200
+                                    },
+                                    (err, token) => {
+                                        res.json({
+                                            success: true,
+                                            token: 'Bearer ' + token
+                                        });
+                                    });
+                            })
                             .catch(err => console.log(err));
                     });
                 });
@@ -39,6 +76,13 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+    const {
+        errors,
+        isValid
+    } = validateLoginInput(req.body);
+
+    if (!isValid) return res.status(400).json(errors);
+
     const email = req.body.email;
     const password = req.body.password;
 
@@ -46,13 +90,37 @@ router.post('/login', (req, res) => {
             email
         })
         .then(player => {
+            // return this message if player doesn't exist
             if (!player) {
                 return res.status(404).json({
                     email: 'This email is not associated with any player'
                 });
             }
 
-            // left off here...
+            // check to see if the password is correct
+            bcrypt.compare(password, player.password)
+                .then(isMatch => {
+                    if (isMatch) {
+                        const payload = {
+                            id: player.id,
+                            email: player.email
+                        };
+
+                        jwt.sign(payload, keys.secretOrKey, {
+                            expiresIn: 7200
+                        }, (err, token) => {
+                            res.json({
+                                success: true,
+                                token: 'Bearer ' + token
+                            });
+                        });
+
+                    } else {
+                        return res.status(400).json({
+                            password: 'Password is incorrect'
+                        });
+                    }
+                });
         });
 });
 

@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
 const db = require('./config/keys').mongoURI;
+const passport = require('passport');
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -27,5 +28,7 @@ app.listen(port, () =>
 );
 
 // routes
-app.get('/', (req, res) => res.send('Hello, world.'));
+app.use(passport.initialize());
+require('./config/passport')(passport);
+
 app.use('/api/players', players);
