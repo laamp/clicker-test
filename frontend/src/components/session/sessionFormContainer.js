@@ -3,7 +3,8 @@ import {
 } from 'react-redux';
 import {
     signup,
-    login
+    login,
+    clearSessionErrors
 } from '../../actions/sessionActions';
 
 import SessionForm from './sessionForm';
@@ -15,7 +16,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     signup: playerData => dispatch(signup(playerData)),
-    login: playerData => dispatch(login(playerData))
+    login: playerData => dispatch(login(playerData)),
+    clearSessionErrors: () => dispatch(clearSessionErrors())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SessionForm);

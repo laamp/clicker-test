@@ -12,7 +12,20 @@ class SessionForm extends React.Component {
       signingUp: true
     };
 
+    this.switchForms = this.switchForms.bind(this);
     this.submitForm = this.submitForm.bind(this);
+  }
+
+  switchForms() {
+    this.setState({
+      name: "",
+      email: "",
+      password: "",
+      password2: "",
+      signingUp: !this.state.signingUp
+    });
+
+    this.props.clearSessionErrors();
   }
 
   updateForm(field) {
@@ -112,9 +125,7 @@ class SessionForm extends React.Component {
     return (
       <>
         <p>This is your session form.</p>
-        <button
-          onClick={() => this.setState({ signingUp: !this.state.signingUp })}
-        >
+        <button onClick={this.switchForms}>
           Switch to {this.state.signingUp ? "login" : "signup"}
         </button>
         {this.renderForm()}

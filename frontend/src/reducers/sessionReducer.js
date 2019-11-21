@@ -1,7 +1,6 @@
 import {
     RECEIVE_PLAYER_LOGOUT,
-    RECEIVE_CURRENT_PLAYER,
-    RECEIVE_PLAYER_SIGN_IN
+    RECEIVE_CURRENT_PLAYER
 } from '../actions/sessionActions';
 
 const initialState = {
@@ -16,10 +15,6 @@ export default (state = initialState, action) => {
                 ...state,
                 isAuthenticated: !!action.currentPlayer,
                     player: action.currentPlayer
-            };
-        case RECEIVE_PLAYER_SIGN_IN:
-            return {
-                ...state, isSignedIn: true
             };
         case RECEIVE_PLAYER_LOGOUT:
             return {

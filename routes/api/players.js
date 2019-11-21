@@ -55,7 +55,10 @@ router.post('/register', (req, res) => {
                             .then(player => {
                                 const payload = {
                                     id: player.id,
-                                    email: player.email
+                                    name: player.name,
+                                    score: player.score,
+                                    businesses: player.businesses,
+                                    managers: player.managers
                                 };
 
                                 jwt.sign(payload, keys.secretOrKey, {
