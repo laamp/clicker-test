@@ -9,7 +9,8 @@ import {
 import SessionForm from './sessionForm';
 
 const mapStateToProps = state => ({
-    loggedIn: state.session.isAuthenticated
+    loggedIn: state.session.isAuthenticated,
+    sessionErrors: state.errors.session
 });
 
 const mapDispatchToProps = dispatch => ({

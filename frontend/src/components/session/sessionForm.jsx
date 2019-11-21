@@ -42,13 +42,6 @@ class SessionForm extends React.Component {
 
       this.props.login(player);
     }
-
-    this.setState({
-      name: "",
-      email: "",
-      password: "",
-      password2: ""
-    });
   }
 
   renderForm() {
@@ -77,7 +70,7 @@ class SessionForm extends React.Component {
             type="password"
             value={this.state.password2}
             onChange={this.updateForm("password2")}
-            placeholder="Type it again"
+            placeholder="Confirm your password"
           />
           <input type="submit" value="Create account" />
         </form>
@@ -106,7 +99,11 @@ class SessionForm extends React.Component {
   renderErrors() {
     return (
       <>
-        <p>errors go here</p>
+        <ul>
+          {Object.values(this.props.sessionErrors).map((err, i) => (
+            <li key={`error-${i}`}>{err}</li>
+          ))}
+        </ul>
       </>
     );
   }
