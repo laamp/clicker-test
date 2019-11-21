@@ -1,3 +1,4 @@
 node_modules
 config/mongoDBUser.txt
 config/keys.js
+.vscode

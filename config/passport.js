@@ -13,7 +13,6 @@ module.exports = passport => {
         Player.findById(jwt_payload.id)
             .then(player => {
                 if (player) {
-                    console.log(player)
                     return done(null, player);
                 }
 

@@ -16,9 +16,9 @@ router.get('/current', passport.authenticate('jwt', {
     session: false
 }), (req, res) => {
     res.json({
-        id: req.player.id,
-        name: req.player.name,
-        email: req.player.email
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
     });
 });
 
