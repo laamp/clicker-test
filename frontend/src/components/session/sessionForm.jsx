@@ -34,7 +34,21 @@ class SessionForm extends React.Component {
       };
 
       this.props.signup(newPlayer);
+    } else {
+      let player = {
+        email: this.state.email,
+        password: this.state.password
+      };
+
+      this.props.login(player);
     }
+
+    this.setState({
+      name: "",
+      email: "",
+      password: "",
+      password2: ""
+    });
   }
 
   renderForm() {
@@ -69,7 +83,23 @@ class SessionForm extends React.Component {
         </form>
       );
     } else {
-      return null;
+      return (
+        <form onSubmit={this.submitForm}>
+          <input
+            type="email"
+            value={this.state.email}
+            onChange={this.updateForm("email")}
+            placeholder="Email address (you@email.com)"
+          />
+          <input
+            type="password"
+            value={this.state.password}
+            onChange={this.updateForm("password")}
+            placeholder="Enter your password"
+          />
+          <input type="submit" value="Sign in" />
+        </form>
+      );
     }
   }
 

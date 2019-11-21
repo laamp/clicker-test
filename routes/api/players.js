@@ -124,4 +124,10 @@ router.post('/login', (req, res) => {
         });
 });
 
+router.get('/leaderboard', (req, res) => {
+    Player.find().limit(10).sort({
+        score: -1
+    }).then(players => res.json(players));
+});
+
 module.exports = router;

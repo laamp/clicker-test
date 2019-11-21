@@ -1,16 +1,17 @@
 import React from "react";
 
 class NavBar extends React.Component {
-  componentDidMount() {
-    console.log(this.props.state);
-  }
+  componentDidMount() {}
 
   render() {
     return (
       <>
         <p>This is your nav bar.</p>
         {this.props.loggedIn ? (
-          <p>Hello, PLAYERNAME "logout goes here"</p>
+          <>
+            <p>Hello, PLAYERNAME</p>
+            <button onClick={this.props.logout}>Log out</button>
+          </>
         ) : (
           <p>Please log in to play</p>
         )}
