@@ -133,7 +133,18 @@ router.post('/login', (req, res) => {
 router.get('/leaderboard', (req, res) => {
     Player.find().limit(10).sort({
         score: -1
-    }).then(players => res.json(players));
+    }).then(players => {
+        let leaders = [];
+
+        players.forEach(player => {
+            leaders.push({
+                name: player.name,
+                score: player.score
+            });
+        });
+
+        res.json(leaders);
+    }).catch(err => console.log(err));
 });
 
 module.exports = router;

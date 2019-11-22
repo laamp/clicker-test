@@ -1,21 +1,20 @@
 import React from "react";
 
-class NavBar extends React.Component {
-  componentDidMount() {}
+import "../../styles/navbar.scss";
 
+class NavBar extends React.Component {
   render() {
     return (
-      <>
-        <p>This is your nav bar.</p>
+      <div className="navbar">
         {this.props.loggedIn ? (
           <>
-            <p>Hello, PLAYERNAME</p>
+            <p>Hello, {this.props.currentPlayer.name}</p>
             <button onClick={this.props.logout}>Log out</button>
           </>
         ) : (
           <p>Please log in to play</p>
         )}
-      </>
+      </div>
     );
   }
 }
