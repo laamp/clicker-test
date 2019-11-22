@@ -10,6 +10,7 @@ class Leaderboard extends React.Component {
 
     return (
       <div className="leaderboard">
+        <h3>Leaderboard</h3>
         <ul>
           {this.props.leaderboard.map((player, i) => (
             <li key={`leader-${i}`}>

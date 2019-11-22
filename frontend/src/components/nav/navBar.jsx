@@ -12,7 +12,10 @@ class NavBar extends React.Component {
             <button onClick={this.props.logout}>Log out</button>
           </>
         ) : (
-          <p>Please log in to play</p>
+          <>
+            <h2>Welcome to Bit Clicker</h2>
+            <h3>Please log in or sign up to play!</h3>
+          </>
         )}
       </div>
     );

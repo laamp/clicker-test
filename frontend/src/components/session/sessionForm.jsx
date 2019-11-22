@@ -124,7 +124,6 @@ class SessionForm extends React.Component {
   render() {
     return (
       <>
-        <p>This is your session form.</p>
         <button onClick={this.switchForms}>
           Switch to {this.state.signingUp ? "login" : "signup"}
         </button>

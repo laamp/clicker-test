@@ -55,10 +55,7 @@ router.post('/register', (req, res) => {
                             .then(player => {
                                 const payload = {
                                     id: player.id,
-                                    name: player.name,
-                                    score: player.score,
-                                    businesses: player.businesses,
-                                    managers: player.managers
+                                    name: player.name
                                 };
 
                                 jwt.sign(payload, keys.secretOrKey, {
@@ -106,10 +103,7 @@ router.post('/login', (req, res) => {
                     if (isMatch) {
                         const payload = {
                             id: player.id,
-                            name: player.name,
-                            score: player.score,
-                            businesses: player.businesses,
-                            managers: player.managers
+                            name: player.name
                         };
 
                         jwt.sign(payload, keys.secretOrKey, {
@@ -145,6 +139,35 @@ router.get('/leaderboard', (req, res) => {
 
         res.json(leaders);
     }).catch(err => console.log(err));
+});
+
+// get the current player's data
+router.get('/:id', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    Player.findById(req.params.id)
+        .then(player => {
+            res.json({
+                name: player.name,
+                score: player.score,
+                businesses: player.businesses,
+                managers: player.managers
+            });
+        }).catch(err => console.log(err));
+});
+
+// save the current player's progress
+router.patch('/:id', passport.authenticate('jwt', {
+    session: false
+}), (req, res) => {
+    Player.findById(req.params.id)
+        .then(player => {
+            if (req.body.score) player.score = req.body.score;
+            if (req.body.businesses) player.businesses = req.body.businesses;
+            if (req.body.managers) player.managers = req.body.managers;
+
+            player.save().then(p => res.json(p));
+        }).catch(err => console.log(err));
 });
 
 module.exports = router;
