@@ -7,3 +7,7 @@ export const getLeaderboard = () => (
 export const getPlayerProgress = id => (
     axios.get(`api/players/${id}`)
 );
+
+export const savePlayerProgress = (id, saveState) => (
+    axios.patch(`api/players/${id}`, saveState)
+)

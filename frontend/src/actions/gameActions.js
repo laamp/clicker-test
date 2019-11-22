@@ -35,3 +35,9 @@ export const getPlayerProgress = id => dispatch => (
     .then(res => dispatch(receivePlayerProgress(res.data)))
     .catch(err => dispatch(receiveGameErrors(err)))
 );
+
+export const savePlayerProgress = (id, saveState) => dispatch => (
+    APIUtil.savePlayerProgress(id, saveState)
+    .then(() => console.log('Progress saved'))
+    .catch(err => dispatch(receiveGameErrors(err)))
+);

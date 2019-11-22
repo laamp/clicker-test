@@ -5,8 +5,28 @@ class Game extends React.Component {
     super(props);
 
     this.state = {
-      currentScore: 0
+      score: 0,
+      businesses: [],
+      managers: []
     };
+
+    this.debugGameState = this.debugGameState.bind(this);
+  }
+
+  debugGameState() {
+    this.setState(
+      {
+        score: 123,
+        businesses: [9, 7, 5, 3, 1],
+        managers: [true, false, false, false, false]
+      },
+      () => {
+        this.props.savePlayerState(
+          this.props.authenticatedPlayer.id,
+          this.state
+        );
+      }
+    );
   }
 
   componentDidMount() {
@@ -22,6 +42,7 @@ class Game extends React.Component {
         <div>Tile 04</div>
         <div>Tile 05</div>
         <div>Tile 06</div>
+        <button onClick={this.debugGameState}>DEBUG</button>
       </div>
     );
   }

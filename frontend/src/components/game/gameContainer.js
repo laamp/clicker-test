@@ -2,7 +2,8 @@ import {
     connect
 } from 'react-redux';
 import {
-    getPlayerProgress
+    getPlayerProgress,
+    savePlayerProgress
 } from '../../actions/gameActions';
 
 import Game from './game';
@@ -13,7 +14,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getPlayerProgress: id => dispatch(getPlayerProgress(id))
+    getPlayerProgress: id => dispatch(getPlayerProgress(id)),
+    savePlayerState: (id, saveState) => dispatch(savePlayerProgress(id, saveState))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
