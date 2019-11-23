@@ -25,9 +25,8 @@ class Game extends React.Component {
     ];
     this.baseCosts = [1, 10, 1000, 100000, 1000000];
     this.baseTimers = [1000, 3000, 10000, 30000, 60000];
-    this.baseProfit = [1, 10, 100, 8, 12];
+    this.baseProfit = [1, 10, 100, 1000, 10000];
     this.businessIds = [null, null, null, null, null];
-    this.progressBars = [0, 0, 0, 0, 0];
     this.progressBarIds = [null, null, null, null, null];
 
     this.autosaveFreq = 30000;
@@ -74,6 +73,7 @@ class Game extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.state.autosaveId);
+    this.progressBarIds.forEach(id => clearInterval(id));
   }
 
   onExit() {
@@ -97,30 +97,31 @@ class Game extends React.Component {
     );
   }
 
-  collectProfit(idx) {
-    this.setState({
-      score: this.state.score + this.baseProfit[idx]
-    });
+  calculateProfit(idx) {
+    return this.baseProfit[idx];
   }
 
   startCollectTimer(idx) {
+    if (this.progressBarIds[idx]) return;
+
     this.progressBarIds[idx] = setInterval(() => {
       this.setState(() => {
-        const newBars = this.state.progressBars.map((bar, j) => {
-          // if bar is full collect money and reset
-          if (bar >= 100) {
-            this.collectProfit(idx);
-            return 0;
-          }
+        let points = 0;
 
+        const newBars = this.state.progressBars.map((bar, j) => {
           if (j === idx) {
+            // if bar is full collect money and reset
+            if (bar >= 100) {
+              points = this.calculateProfit(j);
+              return 0;
+            }
             return bar + 1000 / this.baseTimers[idx];
           } else {
             return bar;
           }
         });
 
-        return { progressBars: newBars };
+        return { progressBars: newBars, score: this.state.score + points };
       });
     }, 10);
   }
