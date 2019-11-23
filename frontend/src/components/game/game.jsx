@@ -1,4 +1,7 @@
 import React from "react";
+import ProgressBar from "./progressBar/progressBar";
+
+import "../../styles/game.scss";
 
 class Game extends React.Component {
   constructor(props) {
@@ -8,13 +11,27 @@ class Game extends React.Component {
       score: 0,
       businesses: [],
       managers: [],
-      autosaveId: null
+      autosaveId: null,
+      progressBars: [0, 0, 0, 0, 0]
     };
 
-    // global game constants
+    // global game vars
+    this.businessNames = [
+      "Bytes",
+      "Kilobytes",
+      "Megabytes",
+      "Gigabytes",
+      "Terabytes"
+    ];
+    this.baseCosts = [1, 10, 1000, 100000, 1000000];
     this.baseTimers = [1000, 3000, 10000, 30000, 60000];
-    this.baseProfit = [1, 2, 4, 8, 12];
-    this.autosaveFreq = 10000;
+    this.baseProfit = [1, 10, 100, 8, 12];
+    this.businessIds = [null, null, null, null, null];
+    this.progressBars = [0, 0, 0, 0, 0];
+    this.progressBarIds = [null, null, null, null, null];
+
+    this.autosaveFreq = 30000;
+    // end of global game vars
 
     this.debugGameState = this.debugGameState.bind(this);
     this.autosave = this.autosave.bind(this);
@@ -25,9 +42,9 @@ class Game extends React.Component {
   debugGameState() {
     this.setState(
       {
-        score: 123,
-        businesses: [9, 7, 5, 3, 1],
-        managers: [true, false, false, false, false]
+        score: 100,
+        businesses: [0, 0, 0, 0, 0],
+        managers: [false, false, false, false, false]
       },
       () => {
         this.props.savePlayerState(
@@ -70,15 +87,42 @@ class Game extends React.Component {
   }
 
   purchaseBusiness(idx) {
+    if (this.state.score < this.baseCosts[idx]) return;
+
     let temp = Object.values(Object.assign({}, this.state.businesses));
     temp[idx]++;
-    this.setState({ businesses: temp }, () => this.autosave());
+    this.setState(
+      { businesses: temp, score: this.state.score - this.baseCosts[idx] },
+      () => this.autosave()
+    );
   }
 
   collectProfit(idx) {
     this.setState({
       score: this.state.score + this.baseProfit[idx]
     });
+  }
+
+  startCollectTimer(idx) {
+    this.progressBarIds[idx] = setInterval(() => {
+      this.setState(() => {
+        const newBars = this.state.progressBars.map((bar, j) => {
+          // if bar is full collect money and reset
+          if (bar >= 100) {
+            this.collectProfit(idx);
+            return 0;
+          }
+
+          if (j === idx) {
+            return bar + 1000 / this.baseTimers[idx];
+          } else {
+            return bar;
+          }
+        });
+
+        return { progressBars: newBars };
+      });
+    }, 10);
   }
 
   renderGameboard() {
@@ -88,9 +132,10 @@ class Game extends React.Component {
         <ul className="gameboard-businesses">
           {this.state.businesses.map((business, i) => (
             <li key={`business-${i}`}>
-              {business}
-              <button onClick={() => this.purchaseBusiness(i)}>Buy 1</button>
-              <button>Collect</button>
+              {`${this.businessNames[i]}: ${business}`}
+              <button onClick={() => this.purchaseBusiness(i)}>Buy</button>
+              <button onClick={() => this.startCollectTimer(i)}>Collect</button>
+              <ProgressBar progress={this.state.progressBars[i]} />
             </li>
           ))}
           {/* Remove this button later */}

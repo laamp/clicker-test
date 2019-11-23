@@ -1,0 +1,14 @@
+@import "./vars.scss";
+
+.progress-bar-container {
+    margin: 5px;
+    height: 12px;
+    width: 300px;
+    background-color: grey;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 50%;
+    background-color: purple;
+}
