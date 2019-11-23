@@ -22,3 +22,11 @@ ol {
     margin: 0;
     padding: 0;
 }
+
+button,
+input {
+    border: none;
+    padding: 10px;
+    outline: 0;
+    background-color: transparent;
+}
