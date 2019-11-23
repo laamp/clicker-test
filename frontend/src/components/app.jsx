@@ -8,6 +8,8 @@ import SessionFormContainer from "./session/sessionFormContainer";
 import NotFound404 from "./notFound404";
 import LeaderboardContainer from "./leaderboard/leaderboardContainer";
 
+import "../styles/app.scss";
+
 const App = () => (
   <>
     <NavBarContainer />

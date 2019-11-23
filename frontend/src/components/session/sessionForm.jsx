@@ -1,5 +1,7 @@
 import React from "react";
 
+import "../../styles/sessionform.scss";
+
 class SessionForm extends React.Component {
   constructor(props) {
     super(props);
@@ -111,25 +113,25 @@ class SessionForm extends React.Component {
 
   renderErrors() {
     return (
-      <>
+      <div className="session-errors">
         <ul>
           {Object.values(this.props.sessionErrors).map((err, i) => (
             <li key={`error-${i}`}>{err}</li>
           ))}
         </ul>
-      </>
+      </div>
     );
   }
 
   render() {
     return (
-      <>
+      <div className="session-form">
         <button onClick={this.switchForms}>
           Switch to {this.state.signingUp ? "login" : "signup"}
         </button>
         {this.renderForm()}
         {this.renderErrors()}
-      </>
+      </div>
     );
   }
 }
