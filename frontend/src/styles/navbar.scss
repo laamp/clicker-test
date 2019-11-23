@@ -2,9 +2,9 @@
 
 .navbar {
   color: white;
-  background-color: $primary;
+  background-color: $primary-dark;
   margin: 0 0 15px 0;
-  box-shadow: -2px -3px 5px 4px black;
+  box-shadow: $modal-shadow;
 
   h1 {
     font-size: 2em;
@@ -16,5 +16,33 @@
     font-size: 1.4em;
     text-align: center;
     padding: 0 0 10px 0;
+  }
+
+  .logged-in {
+    display: flex;
+    justify-content: space-between;
+    line-height: 60px;
+
+    h3 {
+      margin-left: 35px;
+    }
+
+    button {
+      color: white;
+      cursor: pointer;
+      padding: 10px;
+      background-color: $secondary;
+      height: 50%;
+      align-self: center;
+      margin-right: 35px;
+      border-radius: 5px;
+      border: $modal-border;
+      box-shadow: $modal-shadow;
+
+      &:active {
+        margin-top: 2px;
+        box-shadow: none;
+      }
+    }
   }
 }

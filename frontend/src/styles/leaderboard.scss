@@ -1,0 +1,29 @@
+@import "./vars.scss";
+
+.leaderboard {
+    width: 420px;
+    margin: 40px auto;
+    border: $modal-border;
+    border-radius: 5px;
+    box-shadow: 0px 2px 7px -2px black;
+    overflow: hidden;
+
+    h3 {
+        color: white;
+        background-color: $secondary-light;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    li {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 65px;
+        border-top: $light-border;
+    }
+
+    ul li:first-child {
+        color: white;
+        background-color: $secondary-light;
+    }
+}
