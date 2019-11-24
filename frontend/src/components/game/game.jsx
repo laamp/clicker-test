@@ -214,6 +214,7 @@ class Game extends React.Component {
       return (
         <div className="scrim">
           <div className="earnings-modal">
+            <h1>Welcome Back!</h1>
             <h2>You earned {this.state.loginMoney} while you were away!</h2>
             <button
               onClick={() => {

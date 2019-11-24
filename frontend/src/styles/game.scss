@@ -13,6 +13,7 @@
         padding: 10px;
         background-color: $primary;
         color: white;
+        font-size: 1.3em;
     }
 
     li {
@@ -78,4 +79,45 @@
     height: 100vh;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.5);
+}
+
+.earnings-modal {
+    width: 420px;
+    height: 400px;
+    margin: 150px auto;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: $modal-shadow;
+    border: $modal-border;
+
+    h1 {
+        font-size: 1.8em;
+        color: white;
+        background-color: $primary;
+        padding: 10px;
+        text-align: center;
+    }
+
+    h2 {
+        text-align: center;
+        margin: 50px 30px;
+        font-size: 1.5em;
+    }
+
+    button {
+        background-color: $secondary;
+        border-radius: 5px;
+        box-shadow: $modal-shadow;
+        color: white;
+        border: $modal-border;
+        margin: 0 auto;
+        display: block;
+        font-size: 1.3em;
+        padding: 15px 20px;
+
+        &:active {
+            box-shadow: none;
+            transform: translateY(2px);
+        }
+    }
 }
