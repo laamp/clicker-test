@@ -4,7 +4,8 @@ import {
 import {
     getPlayerProgress,
     savePlayerProgress,
-    clearGameErrors
+    clearGameErrors,
+    getLeaderboard
 } from '../../actions/gameActions';
 
 import Game from './game';
@@ -17,7 +18,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     getPlayerProgress: id => dispatch(getPlayerProgress(id)),
     savePlayerState: (id, saveState) => dispatch(savePlayerProgress(id, saveState)),
-    clearGameErrors: () => dispatch(clearGameErrors())
+    clearGameErrors: () => dispatch(clearGameErrors()),
+    getLeaderboard: () => dispatch(getLeaderboard())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

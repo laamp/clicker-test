@@ -1,17 +1,52 @@
 @import "./vars.scss";
 
 .gameboard-container {
-    width: 840px;
+    width: 700px;
     margin: 0 auto;
     display: flex;
     border: $modal-border;
     box-shadow: $modal-shadow;
     border-radius: 5px;
     overflow: hidden;
+
+    h3 {
+        padding: 10px;
+        background-color: $primary;
+        color: white;
+    }
+
+    li {
+        margin: 10px;
+    }
+
+    ul li:last-child {
+        margin-bottom: 15px;
+    }
+
+    .buy-button,
+    .collect-button,
+    .buy-manager {
+        border: $modal-border;
+        box-shadow: $modal-shadow;
+        border-radius: 5px;
+        padding: 5px;
+        margin: 3px 10px;
+        background-color: $primary-light;
+
+        &:active {
+            box-shadow: none;
+            transform: translateY(2px);
+        }
+    }
+
+    .collect-button {
+        background-color: $secondary-light;
+        color: white;
+    }
 }
 
 .gameboard {
-    width: 100%;
+    width: 150%;
     border-right: $light-border;
 }
 

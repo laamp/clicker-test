@@ -59,7 +59,10 @@ class Game extends React.Component {
           managers: this.props.currentPlayer.managers,
           autosaveId: id
         },
-        this.startManagedBusinesses
+        () => {
+          this.startManagedBusinesses();
+          this.props.getLeaderboard();
+        }
       );
 
       window.addEventListener("beforeunload", this.onExit);
@@ -168,12 +171,18 @@ class Game extends React.Component {
           <h3 className="gameboard-score">Bits: {this.state.score}</h3>
           {this.state.businesses.map((business, i) => (
             <li key={`business-${i}`}>
-              {`${this.businessNames[i]}: ${business}`}
-              <button onClick={() => this.purchaseBusiness(i)}>
+              {`${this.businessNames[i]} -- lvl ${business}`}
+              <button
+                className="buy-button"
+                onClick={() => this.purchaseBusiness(i)}
+              >
                 Buy for {this.calculatePurchaseCost(i)}
               </button>
               {this.state.businesses[i] > 0 ? (
-                <button onClick={() => this.startCollectTimer(i)}>
+                <button
+                  className="collect-button"
+                  onClick={() => this.startCollectTimer(i)}
+                >
                   Collect
                 </button>
               ) : null}
@@ -187,7 +196,10 @@ class Game extends React.Component {
             if (!purchased) {
               return (
                 <li key={`manager-${i}`}>
-                  <button onClick={() => this.purchaseManager(i)}>
+                  <button
+                    className="buy-manager"
+                    onClick={() => this.purchaseManager(i)}
+                  >
                     Hire {this.managerNames[i]} for {this.managerCosts[i]}
                   </button>
                 </li>
