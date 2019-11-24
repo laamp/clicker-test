@@ -46,7 +46,8 @@ router.post('/register', (req, res) => {
                     email: req.body.email,
                     password: req.body.password,
                     businesses: [1, 0, 0, 0, 0],
-                    managers: [false, false, false, false, false]
+                    managers: [false, false, false, false, false],
+                    lastLoggedIn: Date.now()
                 });
 
                 bcrypt.genSalt(10, (err, salt) => {
@@ -153,7 +154,8 @@ router.get('/:id', passport.authenticate('jwt', {
                 name: player.name,
                 score: player.score,
                 businesses: player.businesses,
-                managers: player.managers
+                managers: player.managers,
+                lastLoggedIn: player.lastLoggedIn
             });
         }).catch(err => console.log(err));
 });
@@ -167,6 +169,7 @@ router.patch('/:id', passport.authenticate('jwt', {
             if (req.body.score) player.score = req.body.score;
             if (req.body.businesses) player.businesses = req.body.businesses;
             if (req.body.managers) player.managers = req.body.managers;
+            if (req.body.lastLoggedIn) player.lastLoggedIn = req.body.lastLoggedIn;
 
             player.save().then(p => res.json(p));
         }).catch(err => console.log(err));

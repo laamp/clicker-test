@@ -28,6 +28,10 @@ const PlayerSchema = new Schema({
         type: Boolean,
         default: false
     }],
+    lastLoggedIn: {
+        type: Number,
+        min: 0
+    },
     date: {
         type: Date,
         default: Date.now

@@ -2,6 +2,9 @@ import {
     connect
 } from 'react-redux';
 import {
+    savePlayerProgress
+} from '../../actions/gameActions';
+import {
     logout
 } from '../../actions/sessionActions';
 
@@ -13,6 +16,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+    savePlayerState: (id, saveState) => dispatch(savePlayerProgress(id, saveState)),
     logout: () => dispatch(logout())
 });
 
