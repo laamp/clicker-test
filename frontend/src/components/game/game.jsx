@@ -99,10 +99,19 @@ class Game extends React.Component {
   }
 
   autosave() {
-    this.setState({ lastLoggedIn: Date.now() }, () => {
-      this.props.clearGameErrors();
-      this.props.savePlayerState(this.props.authenticatedPlayer.id, this.state);
-    });
+    let leftoverMoney = 0;
+    if (this.state.loginMoney) leftoverMoney += this.state.loginMoney;
+
+    this.setState(
+      { lastLoggedIn: Date.now(), score: this.state.score + leftoverMoney },
+      () => {
+        this.props.clearGameErrors();
+        this.props.savePlayerState(
+          this.props.authenticatedPlayer.id,
+          this.state
+        );
+      }
+    );
   }
 
   startManagedBusinesses() {
@@ -203,8 +212,8 @@ class Game extends React.Component {
   renderEarningsPopup() {
     if (this.state.loginMoney) {
       return (
-        <div>
-          <div>
+        <div className="scrim">
+          <div className="earnings-modal">
             <h2>You earned {this.state.loginMoney} while you were away!</h2>
             <button
               onClick={() => {
