@@ -52,15 +52,22 @@ class Game extends React.Component {
     this.props.getPlayerProgress(this.props.authenticatedPlayer.id).then(() => {
       const id = setInterval(this.autosave, this.autosaveFreq);
 
-      this.setState({
-        score: this.props.currentPlayer.score,
-        businesses: this.props.currentPlayer.businesses,
-        managers: this.props.currentPlayer.managers,
-        autosaveId: id
-      });
+      this.setState(
+        {
+          score: this.props.currentPlayer.score,
+          businesses: this.props.currentPlayer.businesses,
+          managers: this.props.currentPlayer.managers,
+          autosaveId: id
+        },
+        this.startManagedBusinesses
+      );
 
       window.addEventListener("beforeunload", this.onExit);
     });
+  }
+
+  componentDidUpdate() {
+    this.startManagedBusinesses();
   }
 
   componentWillUnmount() {
@@ -78,6 +85,12 @@ class Game extends React.Component {
     this.props.savePlayerState(this.props.authenticatedPlayer.id, this.state);
   }
 
+  startManagedBusinesses() {
+    this.state.managers.forEach((purchased, i) => {
+      if (purchased) this.startCollectTimer(i);
+    });
+  }
+
   purchaseBusiness(idx) {
     if (this.state.score < this.baseCosts[idx]) return;
 
@@ -85,7 +98,27 @@ class Game extends React.Component {
     temp[idx]++;
     this.setState(
       { businesses: temp, score: this.state.score - this.baseCosts[idx] },
-      () => this.autosave()
+      this.autosave
+    );
+  }
+
+  purchaseManager(idx) {
+    if (this.state.score < this.managerCosts[idx]) return;
+
+    const newManagers = this.state.managers.map((purchased, i) => {
+      if (i === idx) {
+        return true;
+      } else {
+        return purchased;
+      }
+    });
+
+    this.setState(
+      {
+        managers: newManagers,
+        score: this.state.score - this.managerCosts[idx]
+      },
+      this.autosave
     );
   }
 
@@ -131,8 +164,8 @@ class Game extends React.Component {
   renderGameboard() {
     return (
       <div className="gameboard-container">
-        <p className="gameboard-score">Bits: {this.state.score}</p>
-        <ul className="gameboard-businesses">
+        <ul className="gameboard">
+          <h3 className="gameboard-score">Bits: {this.state.score}</h3>
           {this.state.businesses.map((business, i) => (
             <li key={`business-${i}`}>
               {`${this.businessNames[i]}: ${business}`}
@@ -149,9 +182,20 @@ class Game extends React.Component {
           ))}
         </ul>
         <ul className="gameboard-managers">
-          {this.state.managers.map((purchased, i) => (
-            <li key={`manager-${i}`}></li>
-          ))}
+          <h3>Managers for hire</h3>
+          {this.state.managers.map((purchased, i) => {
+            if (!purchased) {
+              return (
+                <li key={`manager-${i}`}>
+                  <button onClick={() => this.purchaseManager(i)}>
+                    Hire {this.managerNames[i]} for {this.managerCosts[i]}
+                  </button>
+                </li>
+              );
+            } else {
+              return null;
+            }
+          })}
         </ul>
       </div>
     );

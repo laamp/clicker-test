@@ -1,14 +1,37 @@
 @import "./vars.scss";
 
+.gameboard-container {
+    width: 840px;
+    margin: 0 auto;
+    display: flex;
+    border: $modal-border;
+    box-shadow: $modal-shadow;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.gameboard {
+    width: 100%;
+    border-right: $light-border;
+}
+
+.gameboard-managers {
+    width: 100%;
+}
+
 .progress-bar-container {
     margin: 5px;
-    height: 12px;
-    width: 300px;
-    background-color: grey;
+    height: 18px;
+    width: 310px;
+    background-color: $secondary-lightest;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0px 2px 4px -1px black;
 }
 
 .progress-bar {
     height: 100%;
     width: 50%;
-    background-color: purple;
+    background-color: $primary;
+    box-shadow: $modal-shadow;
 }
