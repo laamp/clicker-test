@@ -44,7 +44,9 @@ router.post('/register', (req, res) => {
                 const newPlayer = new Player({
                     name: req.body.name,
                     email: req.body.email,
-                    password: req.body.password
+                    password: req.body.password,
+                    businesses: [1, 0, 0, 0, 0],
+                    managers: [false, false, false, false, false]
                 });
 
                 bcrypt.genSalt(10, (err, salt) => {

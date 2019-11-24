@@ -11,7 +11,7 @@ class Leaderboard extends React.Component {
     if (!this.props.leaderboard) return null;
 
     return (
-      <div className="leaderboard">
+      <div className="leaderboard" onClick={this.props.getLeaderboard}>
         <h3>Leaderboard</h3>
         <ul>
           <li>

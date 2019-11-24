@@ -26,4 +26,9 @@
         color: white;
         background-color: $secondary-light;
     }
+
+    &:active {
+        box-shadow: none;
+        margin-top: 42px;
+    }
 }

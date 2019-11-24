@@ -16,6 +16,9 @@ class Game extends React.Component {
     };
 
     // global game vars
+    this.baseCosts = [1, 10, 1000, 100000, 1000000];
+    this.baseTimers = [1000, 3000, 10000, 30000, 60000];
+    this.baseProfit = [1, 2, 4, 16, 24];
     this.businessNames = [
       "Bytes",
       "Kilobytes",
@@ -23,35 +26,24 @@ class Game extends React.Component {
       "Gigabytes",
       "Terabytes"
     ];
-    this.baseCosts = [1, 10, 1000, 100000, 1000000];
-    this.baseTimers = [1000, 3000, 10000, 30000, 60000];
-    this.baseProfit = [1, 10, 100, 1000, 10000];
+
+    this.managerCosts = [25, 100, 10000, 100000, 1000000];
+    this.managerNames = [
+      "Cereal Killer",
+      "Lord Nikon",
+      "Zer0 Cool",
+      "Acid Burn",
+      "Joey"
+    ];
+
     this.businessIds = [null, null, null, null, null];
     this.progressBarIds = [null, null, null, null, null];
 
-    this.autosaveFreq = 30000;
+    this.autosaveFreq = 20000;
     // end of global game vars
 
-    this.debugGameState = this.debugGameState.bind(this);
     this.autosave = this.autosave.bind(this);
     this.onExit = this.onExit.bind(this);
-  }
-
-  // remove this later
-  debugGameState() {
-    this.setState(
-      {
-        score: 100,
-        businesses: [0, 0, 0, 0, 0],
-        managers: [false, false, false, false, false]
-      },
-      () => {
-        this.props.savePlayerState(
-          this.props.authenticatedPlayer.id,
-          this.state
-        );
-      }
-    );
   }
 
   componentDidMount() {
@@ -97,6 +89,10 @@ class Game extends React.Component {
     );
   }
 
+  calculatePurchaseCost(idx) {
+    return this.baseCosts[idx];
+  }
+
   calculateProfit(idx) {
     return this.baseProfit[idx];
   }
@@ -112,6 +108,12 @@ class Game extends React.Component {
           if (j === idx) {
             // if bar is full collect money and reset
             if (bar >= 100) {
+              // stop interval if player doesn't have the manager
+              if (!this.state.managers[idx]) {
+                clearInterval(this.progressBarIds[idx]);
+                this.progressBarIds[idx] = null;
+              }
+
               points = this.calculateProfit(j);
               return 0;
             }
@@ -134,13 +136,22 @@ class Game extends React.Component {
           {this.state.businesses.map((business, i) => (
             <li key={`business-${i}`}>
               {`${this.businessNames[i]}: ${business}`}
-              <button onClick={() => this.purchaseBusiness(i)}>Buy</button>
-              <button onClick={() => this.startCollectTimer(i)}>Collect</button>
+              <button onClick={() => this.purchaseBusiness(i)}>
+                Buy for {this.calculatePurchaseCost(i)}
+              </button>
+              {this.state.businesses[i] > 0 ? (
+                <button onClick={() => this.startCollectTimer(i)}>
+                  Collect
+                </button>
+              ) : null}
               <ProgressBar progress={this.state.progressBars[i]} />
             </li>
           ))}
-          {/* Remove this button later */}
-          <button onClick={this.debugGameState}>DEBUG</button>
+        </ul>
+        <ul className="gameboard-managers">
+          {this.state.managers.map((purchased, i) => (
+            <li key={`manager-${i}`}></li>
+          ))}
         </ul>
       </div>
     );
