@@ -10,4 +10,4 @@ export const getPlayerProgress = id => (
 
 export const savePlayerProgress = (id, saveState) => (
     axios.patch(`api/players/${id}`, saveState)
-)
+);

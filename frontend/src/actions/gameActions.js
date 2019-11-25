@@ -38,8 +38,11 @@ export const getPlayerProgress = id => dispatch => (
 
 export const savePlayerProgress = (id, saveState) => dispatch => (
     APIUtil.savePlayerProgress(id, saveState)
-    .then(() => console.log('Progress saved'))
-    .catch(err => dispatch(receiveGameErrors({
+    .then(() => {
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('Progress saved');
+        }
+    }).catch(err => dispatch(receiveGameErrors({
         save: `Could not save progress: ${err.message}`
     })))
 );

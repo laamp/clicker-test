@@ -1,7 +1,9 @@
 import React from "react";
 import ProgressBar from "./progressBar/progressBar";
+import globals from "../../game/globalVars";
 
 import "../../styles/game.scss";
+import Cubit from "./cubit/cubit";
 
 class Game extends React.Component {
   constructor(props) {
@@ -17,47 +19,23 @@ class Game extends React.Component {
       loginMoney: null
     };
 
-    // global game vars
-    this.baseCosts = [1, 10, 1000, 100000, 1000000];
-    this.baseTimers = [1000, 3000, 10000, 30000, 60000];
-    this.baseProfit = [1, 2, 4, 16, 24];
-    this.businessNames = [
-      "Bytes",
-      "Kilobytes",
-      "Megabytes",
-      "Gigabytes",
-      "Terabytes"
-    ];
-
-    this.managerCosts = [25, 100, 10000, 100000, 1000000];
-    this.managerNames = [
-      "Cereal Killer",
-      "Lord Nikon",
-      "Zer0 Cool",
-      "Acid Burn",
-      "Joey"
-    ];
-
-    this.businessIds = [null, null, null, null, null];
     this.progressBarIds = [null, null, null, null, null];
-
-    this.autosaveFreq = 20000;
-    this.profitPerSecond = 0;
-    // end of global game vars
 
     this.autosave = this.autosave.bind(this);
     this.onExit = this.onExit.bind(this);
     this.calculateProfitPerSecond = this.calculateProfitPerSecond.bind(this);
+    this.collectEarnings = this.collectEarnings.bind(this);
   }
 
   componentDidMount() {
     // populate game component's state with loaded player progress
-    // also setup autosave once progress has been grabbed
     this.props.getPlayerProgress(this.props.authenticatedPlayer.id).then(() => {
+      // calc time since last log in
       const timeElapsed =
         (Date.now() - this.props.currentPlayer.lastLoggedIn) / 1000;
 
-      const id = setInterval(this.autosave, this.autosaveFreq);
+      // start autosaving feature
+      const id = setInterval(this.autosave, globals.autosaveFreq);
 
       this.setState(
         {
@@ -71,6 +49,7 @@ class Game extends React.Component {
           this.startManagedBusinesses();
           this.props.getLeaderboard();
 
+          // if player has been gone long enough and earned money show modal
           if (timeElapsed > 10) {
             const earnings = timeElapsed * this.calculateProfitPerSecond();
             if (earnings > 0) {
@@ -80,11 +59,13 @@ class Game extends React.Component {
         }
       );
 
+      // listen for leaving page and clean up
       window.addEventListener("beforeunload", this.onExit);
     });
   }
 
   componentDidUpdate() {
+    // start collecting if player buys a manager
     this.startManagedBusinesses();
   }
 
@@ -99,19 +80,13 @@ class Game extends React.Component {
   }
 
   autosave() {
-    let leftoverMoney = 0;
-    if (this.state.loginMoney) leftoverMoney += this.state.loginMoney;
+    // collect money if save happens and player hasn't collected
+    this.collectEarnings();
 
-    this.setState(
-      { lastLoggedIn: Date.now(), score: this.state.score + leftoverMoney },
-      () => {
-        this.props.clearGameErrors();
-        this.props.savePlayerState(
-          this.props.authenticatedPlayer.id,
-          this.state
-        );
-      }
-    );
+    this.setState({ lastLoggedIn: Date.now() }, () => {
+      this.props.clearGameErrors();
+      this.props.savePlayerState(this.props.authenticatedPlayer.id, this.state);
+    });
   }
 
   startManagedBusinesses() {
@@ -137,7 +112,7 @@ class Game extends React.Component {
   }
 
   purchaseManager(idx) {
-    if (this.state.score < this.managerCosts[idx]) return;
+    if (this.state.score < globals.managerCosts[idx]) return;
 
     const newManagers = this.state.managers.map((purchased, i) => {
       if (i === idx) {
@@ -150,28 +125,29 @@ class Game extends React.Component {
     this.setState(
       {
         managers: newManagers,
-        score: this.state.score - this.managerCosts[idx]
+        score: this.state.score - globals.managerCosts[idx]
       },
       this.autosave
     );
   }
 
   calculatePurchaseCost(idx) {
-    return this.baseCosts[idx] * (this.state.businesses[idx] + 1);
+    return globals.baseCosts[idx] * (this.state.businesses[idx] + 1);
   }
 
   calculateProfit(idx) {
-    let profit = this.baseProfit[idx] * this.state.businesses[idx];
+    let profit = globals.baseProfit[idx] * this.state.businesses[idx];
 
     return profit;
   }
 
+  // used to determine earnings upon player returning
   calculateProfitPerSecond() {
     let pps = 0;
 
     this.state.managers.forEach((purchased, i) => {
       if (purchased) {
-        pps += this.calculateProfit(i) / (this.baseTimers[i] / 1000);
+        pps += this.calculateProfit(i) / (globals.baseTimers[i] / 1000);
       }
     });
 
@@ -198,7 +174,7 @@ class Game extends React.Component {
               points = this.calculateProfit(j);
               return 0;
             }
-            return bar + 1000 / this.baseTimers[idx];
+            return bar + 1000 / globals.baseTimers[idx];
           } else {
             return bar;
           }
@@ -209,6 +185,18 @@ class Game extends React.Component {
     }, 10);
   }
 
+  collectEarnings() {
+    if (this.state.loginMoney) {
+      this.setState(
+        {
+          score: this.state.score + this.state.loginMoney,
+          loginMoney: null
+        },
+        this.autosave
+      );
+    }
+  }
+
   renderEarningsPopup() {
     if (this.state.loginMoney) {
       return (
@@ -216,23 +204,51 @@ class Game extends React.Component {
           <div className="earnings-modal">
             <h1>Welcome Back!</h1>
             <h2>You earned {this.state.loginMoney} while you were away!</h2>
-            <button
-              onClick={() => {
-                this.setState(
-                  {
-                    score: this.state.score + this.state.loginMoney,
-                    loginMoney: null
-                  },
-                  this.autosave
-                );
-              }}
-            >
-              Collect!
-            </button>
+            <button onClick={this.collectEarnings}>Collect!</button>
           </div>
         </div>
       );
     }
+  }
+
+  renderBusinesses() {
+    return this.state.businesses.map((business, i) => (
+      <li key={`business-${i}`}>
+        <Cubit color={globals.cubitColors[i]} speed={globals.cubitSpeed[i]} />
+        {`${globals.businessNames[i]} -- lvl ${business}`}
+        <button className="buy-button" onClick={() => this.purchaseBusiness(i)}>
+          Buy for {this.calculatePurchaseCost(i)}
+        </button>
+        {this.state.businesses[i] > 0 && !this.state.managers[i] ? (
+          <button
+            className="collect-button"
+            onClick={() => this.startCollectTimer(i)}
+          >
+            Collect
+          </button>
+        ) : null}
+        <ProgressBar progress={this.state.progressBars[i]} />
+      </li>
+    ));
+  }
+
+  renderManagers() {
+    return this.state.managers.map((purchased, i) => {
+      if (!purchased) {
+        return (
+          <li key={`manager-${i}`}>
+            <button
+              className="buy-manager"
+              onClick={() => this.purchaseManager(i)}
+            >
+              Hire {globals.managerNames[i]} for {globals.managerCosts[i]}
+            </button>
+          </li>
+        );
+      } else {
+        return null;
+      }
+    });
   }
 
   renderGameboard() {
@@ -240,45 +256,11 @@ class Game extends React.Component {
       <div className="gameboard-container">
         <ul className="gameboard">
           <h3 className="gameboard-score">Bits: {this.state.score}</h3>
-          {this.state.businesses.map((business, i) => (
-            <li key={`business-${i}`}>
-              {`${this.businessNames[i]} -- lvl ${business}`}
-              <button
-                className="buy-button"
-                onClick={() => this.purchaseBusiness(i)}
-              >
-                Buy for {this.calculatePurchaseCost(i)}
-              </button>
-              {this.state.businesses[i] > 0 && !this.state.managers[i] ? (
-                <button
-                  className="collect-button"
-                  onClick={() => this.startCollectTimer(i)}
-                >
-                  Collect
-                </button>
-              ) : null}
-              <ProgressBar progress={this.state.progressBars[i]} />
-            </li>
-          ))}
+          {this.renderBusinesses()}
         </ul>
         <ul className="gameboard-managers">
-          <h3>Managers for hire</h3>
-          {this.state.managers.map((purchased, i) => {
-            if (!purchased) {
-              return (
-                <li key={`manager-${i}`}>
-                  <button
-                    className="buy-manager"
-                    onClick={() => this.purchaseManager(i)}
-                  >
-                    Hire {this.managerNames[i]} for {this.managerCosts[i]}
-                  </button>
-                </li>
-              );
-            } else {
-              return null;
-            }
-          })}
+          <h3>Hackers for hire</h3>
+          {this.renderManagers()}
         </ul>
       </div>
     );

@@ -1,0 +1,26 @@
+@import './vars.scss';
+
+.not-found {
+    height: fit-content;
+    width: 420px;
+    margin: 30px auto;
+
+    h1 {
+        font-size: 3em;
+    }
+
+    p {
+        font-size: 1.3em;
+    }
+
+    a {
+        font-size: 1.3em;
+        margin: 10px 0 0 0;
+        display: block;
+        color: $primary;
+
+        &:active {
+            color: $secondary;
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import React from "react";
+import Cubit from "../game/cubit/cubit";
 
 import "../../styles/navbar.scss";
 
@@ -26,7 +27,11 @@ class NavBar extends React.Component {
           </div>
         ) : (
           <>
-            <h1>Welcome to Bit Clicker</h1>
+            <h1>
+              <Cubit color="#b085f5" />
+              Welcome to Bit Clicker
+              <Cubit color="#819ca9" />
+            </h1>
             <h2>Please log in or sign up to play!</h2>
           </>
         )}
