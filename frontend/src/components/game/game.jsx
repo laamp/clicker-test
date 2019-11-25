@@ -240,6 +240,7 @@ class Game extends React.Component {
             <button
               className="buy-manager"
               onClick={() => this.purchaseManager(i)}
+              style={{ backgroundColor: globals.cubitColors[i] }}
             >
               Hire {globals.managerNames[i]} for {globals.managerCosts[i]}
             </button>
